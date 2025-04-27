@@ -1,0 +1,46 @@
+public class StudentInfo {
+    public String studentName {get; set;}
+    public String email {get; set;}
+    public Integer age {get; set;}
+
+    public StudentInfo(ApexPages.StandardController controller) {}
+
+    public PageReference saveStudent() {
+        if (studentName != null && age != null) {
+            Account student = new Account(
+                Name = studentName,
+                Phone = String.valueOf(age),
+                Website = email
+            );
+            insert student;
+            PageReference pg = new PageReference('/' + student.Id);
+            pg.setRedirect(true);
+            return pg;
+        } else {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please enter all details.'));
+            return null;
+        }
+    }
+}
+
+
+---------------------------------------------------------
+
+
+
+<apex:page standardController="Account" extensions="StudentInfo">
+    <apex:form>
+        <apex:pageBlock title="Student Information">
+            <apex:pageMessages/>
+            <apex:pageBlockSection>
+                <apex:inputText value="{!studentName}" label="Student Name" required="true"/>
+                <apex:inputText value="{!email}" label="Email"/>
+                <apex:inputText value="{!age}" label="Age" required="true"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons>
+                <apex:commandButton action="{!saveStudent}" value="Save"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
+

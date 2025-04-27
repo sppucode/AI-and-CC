@@ -1,0 +1,99 @@
+public class hotel {
+    public String name {get; set;}
+    public String tableNo {get; set;}
+    public String timeSlot {get; set;}
+    public String paymentMode {get; set;}
+    public Integer capacity {get; set;}
+    
+    public Account savedRecord {get; set;}
+    
+    public hotel(ApexPages.StandardController controller) {
+        // Empty constructor
+    }
+
+    public List<SelectOption> getTableList() {
+        return new List<SelectOption>{
+            new SelectOption('', '--Select--'),
+            new SelectOption('T1', 'Table 1'),
+            new SelectOption('T2', 'Table 2')
+        };
+    }
+
+    public List<SelectOption> getTimeList() {
+        return new List<SelectOption>{
+            new SelectOption('', '--Select--'),
+            new SelectOption('12 PM', '12 PM'),
+            new SelectOption('2 PM', '2 PM')
+        };
+    }
+
+    public List<SelectOption> getPaymentList() {
+        return new List<SelectOption>{
+            new SelectOption('', '--Select--'),
+            new SelectOption('Cash', 'Cash'),
+            new SelectOption('Card', 'Card')
+        };
+    }
+
+    public PageReference save() {
+        Account a = new Account(
+            Name = name,
+            Phone = String.valueOf(capacity),
+            Website = timeSlot,
+            Industry = paymentMode,
+            AccountNumber = tableNo
+        );
+        insert a;
+        
+        // Store saved record to display below
+        savedRecord = a;
+        
+        // Clear form fields after save
+        name = '';
+        tableNo = '';
+        timeSlot = '';
+        paymentMode = '';
+        capacity = null;
+
+        return null; // Stay on same page
+    }
+}
+
+--------------------------------------------------------
+
+
+<apex:page standardController="Account" extensions="hotel">
+    <apex:form>
+        <apex:pageBlock title="Hotel Management System">
+            <apex:pageBlockSection columns="2">
+                <apex:inputText value="{!name}" label="Customer Name" required="true"/>
+                <apex:selectList value="{!tableNo}" size="1" label="Table No" required="true">
+                    <apex:selectOptions value="{!tableList}"/>
+                </apex:selectList>
+                <apex:selectList value="{!timeSlot}" size="1" label="Time Slot" required="true">
+                    <apex:selectOptions value="{!timeList}"/>
+                </apex:selectList>
+                <apex:selectList value="{!paymentMode}" size="1" label="Payment Mode" required="true">
+                    <apex:selectOptions value="{!paymentList}"/>
+                </apex:selectList>
+                <apex:inputText value="{!capacity}" label="Capacity" required="true"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons>
+                <apex:commandButton value="Save" action="{!save}" rerender="savedDetails, apexForm"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+
+        <apex:outputPanel id="savedDetails">
+            <apex:pageBlock title="Saved Booking Details" rendered="{!NOT(ISNULL(savedRecord))}">
+                <apex:pageBlockSection columns="1">
+                    <apex:outputField value="{!savedRecord.Name}" label="Customer Name"/>
+                    <apex:outputField value="{!savedRecord.AccountNumber}" label="Table No"/>
+                    <apex:outputField value="{!savedRecord.Website}" label="Time Slot"/>
+                    <apex:outputField value="{!savedRecord.Industry}" label="Payment Mode"/>
+                    <apex:outputField value="{!savedRecord.Phone}" label="Capacity"/>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+
+    </apex:form>
+</apex:page>

@@ -1,0 +1,45 @@
+public class EmployeeInfo {
+    public String employeeName {get; set;}
+    public String department {get; set;}
+    public String phone {get; set;}
+
+    public EmployeeInfo(ApexPages.StandardController controller) {}
+
+    public PageReference saveEmployee() {
+        if (employeeName != null) {
+            Account emp = new Account(
+                Name = employeeName,
+                Industry = department,
+                Phone = phone
+            );
+            insert emp;
+            PageReference pg = new PageReference('/' + emp.Id);
+            pg.setRedirect(true);
+            return pg;
+        } else {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill Employee Name.'));
+            return null;
+        }
+    }
+}
+ 
+
+---------------------------------------------------------
+
+
+<apex:page standardController="Account" extensions="EmployeeInfo">
+    <apex:form>
+        <apex:pageBlock title="Employee Information">
+            <apex:pageMessages/>
+            <apex:pageBlockSection>
+                <apex:inputText value="{!employeeName}" label="Employee Name" required="true"/>
+                <apex:inputText value="{!department}" label="Department"/>
+                <apex:inputText value="{!phone}" label="Phone"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons>
+                <apex:commandButton action="{!saveEmployee}" value="Save"/>
+            </apex:commandButton>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

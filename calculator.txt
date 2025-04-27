@@ -1,0 +1,56 @@
+public class Calculator {
+    public Decimal number1 {get; set;}
+    public Decimal number2 {get; set;}
+    public Decimal result {get; set;}
+    public String operation {get; set;}
+
+    public Calculator(ApexPages.StandardController controller) {}
+
+    public PageReference calculate() {
+        if (operation == 'Add') {
+            result = number1 + number2;
+        } else if (operation == 'Subtract') {
+            result = number1 - number2;
+        } else if (operation == 'Multiply') {
+            result = number1 * number2;
+        } else if (operation == 'Divide') {
+            if (number2 != 0) {
+                result = number1 / number2;
+            } else {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Cannot divide by zero.'));
+            }
+        }
+        return null;
+    }
+}
+
+
+------------------------------------------------------
+
+
+<apex:page standardController="Account" extensions="Calculator">
+    <apex:form>
+        <apex:pageBlock title="Arithmetic Calculator">
+            <apex:pageMessages/>
+            <apex:pageBlockSection columns="2">
+                <apex:inputText value="{!number1}" label="Number 1" required="true"/>
+                <apex:inputText value="{!number2}" label="Number 2" required="true"/>
+                <apex:selectList value="{!operation}" size="1" label="Operation">
+                    <apex:selectOption itemLabel="Add" itemValue="Add"/>
+                    <apex:selectOption itemLabel="Subtract" itemValue="Subtract"/>
+                    <apex:selectOption itemLabel="Multiply" itemValue="Multiply"/>
+                    <apex:selectOption itemLabel="Divide" itemValue="Divide"/>
+                </apex:selectList>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons>
+                <apex:commandButton value="Calculate" action="{!calculate}"/>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection title="Result" columns="1">
+                <apex:outputText value="Result: {!result}" />
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
